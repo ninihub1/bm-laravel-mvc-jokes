@@ -20,6 +20,10 @@
                     <x-nav-link :href="route('static.home')" :active="request()->routeIs('static.home')">
                         {{ __('Home') }}
                     </x-nav-link>
+                </div><div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('static.about')" :active="request()->routeIs('static.about')">
+                        {{ __('About') }}
+                    </x-nav-link>
                 </div>
             </div>
 
