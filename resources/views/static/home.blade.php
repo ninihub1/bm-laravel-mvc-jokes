@@ -22,6 +22,36 @@
 
     <div class="flex flex-col flex-wrap my-4 mt-8">
         <section class="grid grid-cols-1 gap-4 px-4 mt-4 sm:grid-cols-3 sm:px-8">
+
+            @auth
+            <section class="rounded flex items-center bg-blue-200 border border-blue-600 overflow-hidden">
+                <div class="rounded-l p-6 bg-blue-600">
+                    <i class="fa-solid fa-exclamation"></i>
+                </div>
+                <div class="rounded-r px-6 text-blue-800">
+                    <h3 class="tracking-wider">Total Members</h3>
+                    <p class="text-3xl">12,768</p>
+                </div>
+            </section>
+            @endauth
+
+            @auth
+            <section class="rounded flex items-center bg-red-200 border border-red-600 overflow-hidden">
+                <div class="rounded-l p-6 bg-red-600">
+                    <i class="fa-solid fa-exclamation"></i>
+                </div>
+                <div class="rounded-r px-6 text-red-800">
+                    <h3 class="tracking-wider">Total Jokes</h3>
+                    <p class="text-3xl">142,334</p>
+                </div>
+            </section>
+            @endauth
+        </section>
+
+
+
+        <section class="grid grid-cols-1 gap-4 px-4 mt-4 sm:grid-cols-3 sm:px-8">
+
             <article class="bg-white shadow rounded p-2 flex flex-col">
                 <header class="-mx-2 bg-zinc-700 text-zinc-200 text-lg p-4 -mt-2 mb-4 rounded-t flex-0">
                     <h4>
@@ -38,12 +68,35 @@
                 </section>
                 <footer class="-mx-2 bg-zinc-100 text-zinc-600 text-sm mt-4 -mb-2 rounded-b flex-0">
                     <p class="w-full text-right rounded-b hover:text-black px-4 py-2">
+                        Become a member
+                    </p>
+                </footer>
+            </article>
+
+            <article class="bg-white shadow rounded p-2 flex flex-col">
+                <header class="-mx-2 bg-zinc-700 text-zinc-200 text-lg p-4 -mt-2 mb-4 rounded-t flex-0">
+                    <h4>
+                        Time for a Random Joke
+                    </h4>
+                </header>
+                <section class="flex-grow flex flex-col space-y-3 text-zinc-600">
+                    <p>
+                        No Joke Today
+                    </p>
+                    <p>
+                        And that's all folks
+                    </p>
+                </section>
+                <footer class="-mx-2 bg-zinc-100 text-zinc-600 text-sm mt-4 -mb-2 rounded-b flex-0">
+                    <p class="w-full text-right rounded-b hover:text-black px-4 py-2">
                         Author's Name
                     </p>
                 </footer>
             </article>
+
         </section>
-        <section class="flex justify-center mb-6">
+
+        <section class="flex justify-center mt-4">
             <button class="max-w-96 min-w-64 bg-white shadow rounded p-2 flex flex-col text-center text-xl" onclick="location.reload();">New Joke</button>
         </section>
     </div>
