@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\StaticPageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 //Route::get('/', function () {
@@ -19,6 +20,8 @@ Route::middleware('auth')->group(function () {
 Route::get('/', [StaticPageController::class, 'home'])->name('static.home');
 Route::get('/about', [StaticPageController::class, 'about'])->name('static.about');
 Route::get('/contact', [StaticPageController::class, 'contact'])->name('static.contact');
+
+Route::resource('users',UserController::class)->middleware(['auth', 'verified'])->names('users');
 
 
 require __DIR__.'/auth.php';
