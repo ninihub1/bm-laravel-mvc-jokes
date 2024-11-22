@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\JokeController;
 use App\Http\Controllers\StaticPageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -23,5 +25,5 @@ Route::get('/contact', [StaticPageController::class, 'contact'])->name('static.c
 
 Route::resource('users',UserController::class)->middleware(['auth', 'verified'])->names('users');
 
-
+Route::resource('jokes',JokeController::class)->middleware(['auth', 'verified'])->names('jokes');
 require __DIR__.'/auth.php';

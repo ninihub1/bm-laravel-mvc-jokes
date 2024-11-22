@@ -13,11 +13,23 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::paginate(5);
-        return view('users.index', compact(['users',]));
+        $keyword = $request->get('keyword');
+
+        if ($keyword) {
+            $users = User::where('given_name', 'like', "%{$keyword}%")
+                ->orWhere('family_name', 'like', "%{$keyword}%")
+                ->orWhere('email', 'like', "%{$keyword}%")
+                ->paginate(5);
+        } else {
+            $users = User::paginate(5);
+        }
+
+        return view('users.index', compact(['users']));
     }
+
+
 
     /**
      * Show the form for creating a new resource.
