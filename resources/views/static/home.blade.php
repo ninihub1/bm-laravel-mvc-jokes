@@ -30,7 +30,7 @@
                 </div>
                 <div class="rounded-r px-6 text-blue-800">
                     <h3 class="tracking-wider">Total Members</h3>
-                    <p class="text-3xl">12,768</p>
+                    <p class="text-3xl">{{$totalUsers}}</p>
                 </div>
             </section>
             @endauth
@@ -42,7 +42,7 @@
                 </div>
                 <div class="rounded-r px-6 text-red-800">
                     <h3 class="tracking-wider">Total Jokes</h3>
-                    <p class="text-3xl">142,334</p>
+                    <p class="text-3xl">{{$totalJokes}}</p>
                 </div>
             </section>
             @endauth
@@ -51,7 +51,6 @@
 
 
         <section class="grid grid-cols-1 gap-4 px-4 mt-4 sm:grid-cols-3 sm:px-8">
-
             <article class="bg-white shadow rounded p-2 flex flex-col">
                 <header class="-mx-2 bg-zinc-700 text-zinc-200 text-lg p-4 -mt-2 mb-4 rounded-t flex-0">
                     <h4>
@@ -60,31 +59,10 @@
                 </header>
                 <section class="flex-grow flex flex-col space-y-3 text-zinc-600">
                     <p>
-                        A cowboy butcher decided to relocate his fresh meat shop.
+                        Join Us
                     </p>
                     <p>
-                        "Sorry Folks. I'm pullin' up steaks."
-                    </p>
-                </section>
-                <footer class="-mx-2 bg-zinc-100 text-zinc-600 text-sm mt-4 -mb-2 rounded-b flex-0">
-                    <p class="w-full text-right rounded-b hover:text-black px-4 py-2">
-                        Become a member
-                    </p>
-                </footer>
-            </article>
-
-            <article class="bg-white shadow rounded p-2 flex flex-col">
-                <header class="-mx-2 bg-zinc-700 text-zinc-200 text-lg p-4 -mt-2 mb-4 rounded-t flex-0">
-                    <h4>
-                        Time for a Random Joke
-                    </h4>
-                </header>
-                <section class="flex-grow flex flex-col space-y-3 text-zinc-600">
-                    <p>
-                        No Joke Today
-                    </p>
-                    <p>
-                        And that's all folks
+                        Give us your best jokes!
                     </p>
                 </section>
                 <footer class="-mx-2 bg-zinc-100 text-zinc-600 text-sm mt-4 -mb-2 rounded-b flex-0">
@@ -93,6 +71,33 @@
                     </p>
                 </footer>
             </article>
+
+            <article class="bg-white shadow rounded p-2 flex flex-col">
+                <header class="-mx-2 bg-zinc-700 text-zinc-200 text-lg p-4 -mt-2 mb-4 rounded-t flex-0">
+                    <h4>
+                        Time for a Random Joke
+                    </h4>
+                </header>
+                <section class="flex-grow flex flex-col space-y-3 text-zinc-600">
+                @if($randomJokes && $randomJokes->count())
+                    @foreach($randomJokes as $joke)
+                            <p>{{ $joke->content }}</p>
+                        @endforeach
+                    @else
+                        <p>No jokes available. Click the button for a new joke!</p>
+                    @endif
+                </section>
+                <footer class="-mx-2 bg-zinc-100 text-zinc-600 text-sm mt-4 -mb-2 rounded-b flex-0">
+                    <p class="w-full text-right rounded-b hover:text-black px-4 py-2">
+                @if($joke->user)
+                        {{ $joke->user->given_name }} {{ $joke->user->family_name }}
+                    @else
+                        Unknown Author
+                    @endif
+                    </p>
+                </footer>
+            </article>
+
 
         </section>
 
