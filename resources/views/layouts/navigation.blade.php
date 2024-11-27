@@ -16,15 +16,12 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
-                @auth
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-nav-link :href="route('static.home')" :active="request()->routeIs('static.home')">
-                            {{ __('Home') }}
-                        </x-nav-link>
-                    </div>
-                @else
-                    <a :href="{{route('login')}}"></a>
-                @endauth
+
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('static.home')" :active="request()->routeIs('static.home')">
+                        {{ __('Home') }}
+                    </x-nav-link>
+                </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">

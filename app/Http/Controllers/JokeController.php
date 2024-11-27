@@ -30,8 +30,14 @@ class JokeController extends Controller
     /**
      * Display the specified joke
      */
-    public function show(Joke $joke)
+    public function show(string $id)
     {
+        $joke = Joke::find($id);
+
+        if (!$joke){
+            return redirect()->route('joke.index')
+                ->with('error', 'Joke could not be found.');
+        }
         return view('jokes.show', compact(['joke']));
     }
 
@@ -40,7 +46,12 @@ class JokeController extends Controller
      */
     public function create()
     {
-        return view('jokes.create');
+        if (auth()->check()){
+            return view('jokes.create');
+        } else {
+            return redirect()->route('login')
+                ->with('error', 'You need to login first');
+        }
     }
 
     /**
@@ -57,7 +68,7 @@ class JokeController extends Controller
 
         $validated['author_id'] = auth()->user()->id;
 
-        $jokes = Joke::create($validated);
+        Joke::create($validated);
 
         return redirect()->route('jokes.index')
             ->with('success', 'Joke added successfully!');
@@ -66,41 +77,42 @@ class JokeController extends Controller
     /**
      * Show the form for editing the specified joke
      */
-    public function edit(string $author_id)
-    {
-        $joke = Joke::where('id', $author_id)->first();
+    public function edit(string $id)
+{
+    $joke = Joke::find($id);
 
-        if (!$joke) {
-            return redirect(route('jokes.index'))->with('error', 'Joke not found!');
-        }
-
-        if ($joke->author_id !== auth()->user()->id) {
-            return redirect(route('jokes.index'))->with('error', 'You are not authorized to edit this joke.');
-        }
-
-        return view('jokes.update', compact('joke'));
+    if (!$joke) {
+        return redirect(route('jokes.index'))->with('error', 'Joke not found!');
     }
+
+    if (auth()->check() && $joke->author_id === auth()->user()->id) {
+        return view('jokes.update', compact('joke'));
+    } else {
+        return redirect(route('jokes.index'))->with('error', 'You are not authorized to edit this joke.');
+    }
+}
 
     /**
      * Update the specified joke in the database
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Joke $joke)
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'min:1', 'max:255'],
-            'content' => ['required', 'string', 'min:1', 'max:255'],
-            'category' => ['required', 'string', 'min:1', 'max:255'],
-            'tags' => ['required', 'string', 'min:1', 'max:255'],
-        ]);
+        if (auth()->check() && $joke->author_id === auth()->user()->id) {
+            $validated = $request->validate([
+                'title' => ['required', 'string', 'min:1', 'max:255'],
+                'content' => ['required', 'string', 'min:1', 'max:255'],
+                'category' => ['required', 'string', 'min:1', 'max:255'],
+                'tags' => ['required', 'string', 'min:1', 'max:255'],
+            ]);
+            $joke->update($validated);
 
-        $id = Joke::where('id', '=', $id)->get()->first();
+            return redirect()->route('jokes.index')
+                ->with('success', 'Joke updated successfully!');
+        } else {
+            return redirect(route('jokes.index'))
+                ->with('error', 'You are not authorized to edit this joke.');
+        }
 
-        $id->fill($validated);
-
-        $id->save();
-
-        return redirect()->route('jokes.index')
-            ->with('success', 'Joke updated successfully!');
     }
 
     /**
@@ -108,13 +120,13 @@ class JokeController extends Controller
      */
     public function destroy(Joke $joke)
     {
-        if ($joke->author_id !== auth()->user()->id) {
-            return redirect(route('jokes.index'))->with('error', 'You are not authorized to delete this joke.');
+        if (auth()->check() && $joke->author_id === auth()->user()->id) {
+            $joke->delete();
+
+            return redirect()->route('jokes.index')
+                ->with('success', 'Joke deleted successfully!');
+        } else {
+            return redirect()->route('jokes.index')->with('error', 'You are not authorized to delete this joke.');
         }
-
-        $joke->delete();
-
-        return redirect()->route('jokes.index')
-            ->with('success', 'Joke deleted successfully!');
     }
 }

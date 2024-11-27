@@ -37,7 +37,7 @@
         </div>
 
         <div class="flex flex-col flex-wrap my-4 mt-8">
-            <section class="grid grid-cols-1 gap-4 px-4 mt-4 sm:px-8">
+            <section class="grid grid-cols-1 gap-4 px-4 mt-4 sm:px-4">
 
                 <section class="min-w-full items-center bg-zinc-50 border border-zinc-600 rounded overflow-hidden">
 

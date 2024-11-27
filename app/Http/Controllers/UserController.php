@@ -57,10 +57,11 @@ class UserController extends Controller
         $nickname = $validated['nickname'] ?? $validated['given_name'];
         $validated['nickname'] = $nickname;
 
-        $users = User::create($validated);
+        $validated['creator_id'] = auth()->user()->id;
 
-        return redirect(route('users.index'))
-            ->with('success', 'User created');
+        User::create($validated);
+
+        return redirect(route('users.index'))->with('success', 'User created');
 
     }
 
@@ -69,15 +70,20 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $users = User::whereId($id)->get()->first();
+        $users = User::find($id);
 
-        if ($users) {
-            return view('users.show', compact(['users',]))
-                ->with('success', 'User found');
+        if (!$users){
+            return redirect(route('users.index'))
+                ->with('error', 'User Not Found');
         }
 
+        if ($users->id == auth()->user()->id || $users->creator_id == auth()->user()->id) {
+            return view('users.show', compact(['users',]));
+        }
+
+
         return redirect(route('users.index'))
-            ->with('warning', 'User not found');
+            ->with('error', 'You Are Not Authorized To View This User!');
     }
 
     /**
@@ -85,15 +91,19 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        $users = User::where('id', '=', $id)->get()->first();
+        $users = User::find($id);
 
-        if ($users) {
-            return view('users.update', compact(['users',]))
-                ->with('success', 'User found');
+        if (!$users){
+            return redirect(route('users.index'))
+                ->with('error', 'User Not Found');
+        }
+
+        if ($users->id == auth()->user()->id || $users->creator_id == auth()->user()->id) {
+            return view('users.update', compact(['users',]));
         }
 
         return redirect(route('users.index'))
-            ->with('error', 'User not found');
+            ->with('error', 'You Are Not Authorized To Edit This User!');
     }
 
     /**
@@ -101,6 +111,17 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $users = User::find($id);
+
+        if (!$users){
+            return redirect(route('users.index'))
+                ->with('error', 'User Not Found');
+        }
+
+        if ($users->id !== auth()->user()->id && $users->creator_id !== auth()->user()->id) {
+            return redirect(route('users.index'))
+                ->with('error', 'Unauthorized access');
+        }
 
         if (!$request->password) {
             unset($request['password'], $request['password_confirmation']);
@@ -115,17 +136,15 @@ class UserController extends Controller
             'password_confirmation' => ['sometimes', 'required_with:password', 'min:4', 'max:255', 'string',],
         ]);
 
-        $user = User::where('id', '=', $id)->get()->first();
+        $users->fill($validated);
 
-        $user->fill($validated);
-
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
+        if ($users->isDirty('email')) {
+            $users->email_verified_at = null;
         }
 
-        $user->save();
+        $users->save();
 
-        return redirect(route('users.index', compact(['user'])))
+        return redirect(route('users.index', compact(['users'])))
             ->with('success', 'User updated');
     }
 
@@ -134,18 +153,24 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = User::where('id', '=', $id)->get()->first();
+        $user = User::find($id);
 
-        if (auth()->user()->id !== $user->id) {
+        if (!$user){
+            return redirect(route('users.index'))
+                ->with('error', 'User Not Found');
+        }
 
+        if ($user->id == auth()->user()->id || $user->creator_id == auth()->user()->id) {
             $user->delete();
 
-            return redirect(route('users.index'))
-                ->with('success', 'User deleted');
-
+            if ($user->id == auth()->user()->id) {
+                return redirect(route('login'))->with('success', 'Your Account Has Been Deleted');
+            }
+            return redirect(route('users.index'))->with('success', 'User Deleted');
         }
-        return back()
-            ->with('error', 'Cannot delete yourself');
+
+        return redirect(route('users.index'))
+            ->with('error', 'You Are Not Authorized To Delete This User!');
 
     }
 }

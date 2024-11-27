@@ -44,7 +44,15 @@
                             <p class="whitespace-nowrap px-6 py-4 border-b border-neutral-400 dark:border-white/10">{{$joke->tags}}</p>
 
                             <p class="bg-gray-300 whitespace-nowrap px-6 py-4 border-r border-b border-neutral-400 dark:border-white/10">Author</p>
-                            <p class="whitespace-nowrap px-6 py-4 border-b border-neutral-400 dark:border-white/10">{{$joke->user->given_name . " ". $joke->user->family_name}}</p>
+                            @if ($joke->user)
+                                <p class="whitespace-nowrap px-6 py-4 border-b border-neutral-400 dark:border-white/10">
+                                    {{$joke->user->given_name . " ". $joke->user->family_name}}
+                                </p>
+                            @else
+                                <p class="whitespace-nowrap px-6 py-4 border-b border-neutral-400 dark:border-white/10">
+                                    Author not found
+                                </p>
+                            @endif
                         </section>
 
                         <footer class="grid grid-cols-1 px-6 py-4 border-b border-neutral-200 font-medium text-zinc-800 dark:border-white/10">
@@ -55,7 +63,7 @@
                                     Back
                                 </x-primary-link-button>
 
-                                <x-primary-link-button href="{{ route('jokes.edit', $joke) }}" class="bg-zinc-800">
+                                <x-primary-link-button href="{{ route('jokes.edit', $joke->id) }}" class="bg-zinc-800">
                                     Edit
                                 </x-primary-link-button>
                             </form>
