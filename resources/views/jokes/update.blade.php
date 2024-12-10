@@ -39,6 +39,8 @@
                         @csrf
                         @method('PUT')
 
+                        <input type="hidden" name="author_id" value="{{ $joke->author_id }}">
+
                         <div class="min-w-full text-left text-sm font-light text-surface dark:text-white">
                             <header
                                 class="border-b border-neutral-200 bg-zinc-800 font-medium text-white dark:border-white/10">
@@ -59,11 +61,20 @@
                                 </div>
 
                                 <div class="flex flex-col my-2">
-                                    <x-input-label for="category">
+                                    <x-input-label for="category_id">
                                         Category
                                     </x-input-label>
-                                    <x-text-input id="category" name="category" value="{{ $joke->category }}"/>
-                                    <x-input-error :messages="$errors->get('category')" class="mt-2"/>
+                                    <select id="category_id" name="category_id" class="form-select mt-1 block w-full">
+                                        <option value="">Select a category</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}"
+                                                {{ old('category_id', $joke->category_id) == $category->id ? 'selected' : '' }}>
+                                                {{ $category->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <x-input-error :messages="$errors->get('category_id')" class="mt-2"/>
+
                                 </div>
 
                                 <div class="flex flex-col my-2">

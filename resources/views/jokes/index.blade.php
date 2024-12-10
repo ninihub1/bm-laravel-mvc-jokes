@@ -59,7 +59,7 @@
                             <tr class="border-b text-black border-zinc-300 dark:border-white/10">
                                 <td class="whitespace-nowrap px-6 py-4 font-medium">{{ $joke->id }}</td>
                                 <td class="whitespace-nowrap px-6 py-4">{{ $joke->title }}</td>
-                                <td class="whitespace-nowrap px-6 py-4">{{ $joke->category }}</td>
+                                <td class="whitespace-nowrap px-6 py-4">{{ $joke->category->name }}</td>
                                 <td class="whitespace-nowrap px-6 py-4">{{ $joke->tags }}</td>
                                 <td class="whitespace-nowrap px-6 py-4">{{ $joke->user->given_name. ' '. $joke->user->family_name }}</td>
                                 <td class="whitespace-nowrap px-6 py-4">

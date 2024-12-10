@@ -84,16 +84,16 @@
                             <p>{{ $joke->content }}</p>
                         @endforeach
                     @else
-                        <p>No jokes available. Click the button for a new joke!</p>
+                        <p>No joke today</p>
                     @endif
                 </section>
                 <footer class="-mx-2 bg-zinc-100 text-zinc-600 text-sm mt-4 -mb-2 rounded-b flex-0">
                     <p class="w-full text-right rounded-b hover:text-black px-4 py-2">
-                @if($joke->user)
-                        {{ $joke->user->given_name }} {{ $joke->user->family_name }}
-                    @else
-                        Unknown Author
-                    @endif
+                        @if($randomJokes && $randomJokes->count() && $randomJokes->first()->user)
+                            {{ $randomJokes->first()->user->given_name }} {{ $randomJokes->first()->user->family_name }}
+                        @else
+                            Unknown Author
+                        @endif
                     </p>
                 </footer>
             </article>

@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jokes', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('content');
-            $table->string('category');
-            $table->string('tags');
-            $table->foreignId('author_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('name')->unique();
             $table->timestamps();
         });
     }
@@ -27,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('jokes', function (Blueprint $table) {
-            Schema::dropIfExists('jokes');
-        });
+        Schema::dropIfExists('categories');
     }
 };

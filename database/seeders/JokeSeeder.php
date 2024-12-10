@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Joke;
+use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class JokeSeeder extends Seeder
@@ -12,6 +14,46 @@ class JokeSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $jokes = [
+            [
+                'title' => 'Why did the scarecrow win an award?',
+                'content' => 'Why did the scarecrow win an award? Because he was outstanding in his field!',
+                'category_id' => Category::first()->id,
+                'tags' => 'funny, farming',
+                'author_id' => User::find(1)->id,
+            ],
+            [
+                'title' => "Why don't skeletons fight each other?",
+                'content' => "Why don't skeletons fight each other? They don't have the guts.",
+                'category_id' => Category::first()->id,
+                'tags' => 'funny, skeleton',
+                'author_id' => User::find(2)->id,
+            ],
+            [
+                'title' => 'I told my wife she was drawing her eyebrows too high.',
+                'content' => 'I told my wife she was drawing her eyebrows too high. She looked surprised.',
+                'category_id' => Category::find(2)->id,
+                'tags' => 'funny, marriage',
+                'author_id' => User::find(3)->id,
+            ],
+            [
+                'title' => 'Why did the computer go to the doctor?',
+                'content' => 'Why did the computer go to the doctor? It had a virus.',
+                'category_id' => Category::find(2)->id,
+                'tags' => 'funny, technology',
+                'author_id' => User::find(5)->id,
+            ],
+        ];
+
+        $numRecords = count($jokes);
+        $this->command->getOutput()->progressStart($numRecords);
+
+        foreach ($jokes as $newRecord) {
+            Joke::create($newRecord);
+            $this->command->getOutput()->progressAdvance();
+        }
+
+        $this->command->getOutput()->progressFinish();
     }
 }
+

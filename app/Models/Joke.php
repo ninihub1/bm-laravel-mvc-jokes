@@ -10,7 +10,7 @@ class Joke extends Model
         [
             'title',
             'content',
-            'category',
+            'category_id',
             'tags',
             'author_id',
 
@@ -20,4 +20,10 @@ class Joke extends Model
     {
         return $this->belongsTo(User::class, 'author_id');
     }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
 }

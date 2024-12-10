@@ -38,7 +38,7 @@
                             <p class="whitespace-nowrap px-6 py-4 border-b border-neutral-400 dark:border-white/10">{{$joke->content}}</p>
 
                             <p class="bg-gray-300 whitespace-nowrap px-6 py-4 border-r border-b border-neutral-400 dark:border-white/10">Category</p>
-                            <p class="whitespace-nowrap px-6 py-4 border-b border-neutral-400 dark:border-white/10">{{$joke->category}}</p>
+                            <p class="whitespace-nowrap px-6 py-4 border-b border-neutral-400 dark:border-white/10">{{$joke->category->name}}</p>
 
                             <p class="bg-gray-300 whitespace-nowrap px-6 py-4 border-r border-b border-neutral-400 dark:border-white/10">Tags</p>
                             <p class="whitespace-nowrap px-6 py-4 border-b border-neutral-400 dark:border-white/10">{{$joke->tags}}</p>
