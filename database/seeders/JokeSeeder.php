@@ -16,32 +16,36 @@ class JokeSeeder extends Seeder
     {
         $jokes = [
             [
+                'id' => 1,
                 'title' => 'Why did the scarecrow win an award?',
                 'content' => 'Why did the scarecrow win an award? Because he was outstanding in his field!',
-                'category_id' => Category::first()->id,
+                'category_id' => Category::find(1)->id,
                 'tags' => 'funny, farming',
                 'author_id' => User::find(1)->id,
             ],
             [
+                'id' => 2,
                 'title' => "Why don't skeletons fight each other?",
                 'content' => "Why don't skeletons fight each other? They don't have the guts.",
-                'category_id' => Category::first()->id,
+                'category_id' => Category::find(1)->id,
                 'tags' => 'funny, skeleton',
-                'author_id' => User::find(2)->id,
+                'author_id' => User::find(1)->id,
             ],
             [
+                'id' => 3,
                 'title' => 'I told my wife she was drawing her eyebrows too high.',
                 'content' => 'I told my wife she was drawing her eyebrows too high. She looked surprised.',
                 'category_id' => Category::find(2)->id,
                 'tags' => 'funny, marriage',
-                'author_id' => User::find(3)->id,
+                'author_id' => User::find(1)->id,
             ],
             [
+                'id' => 4,
                 'title' => 'Why did the computer go to the doctor?',
                 'content' => 'Why did the computer go to the doctor? It had a virus.',
                 'category_id' => Category::find(2)->id,
                 'tags' => 'funny, technology',
-                'author_id' => User::find(5)->id,
+                'author_id' => User::find(1)->id,
             ],
         ];
 

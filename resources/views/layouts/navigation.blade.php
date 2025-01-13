@@ -40,6 +40,18 @@
                         {{ __('About') }}
                     </x-nav-link>
                 </div>
+
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('admin.roles-editor')" :active="request()->routeIs('admin.roles-editor')">
+                        {{ __('Roles & Permission') }}
+                    </x-nav-link>
+                </div>
+
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('roles-permissions.index')" :active="request()->routeIs('roles-permissions.index')">
+                        {{ __('Permission Management') }}
+                    </x-nav-link>
+                </div>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">

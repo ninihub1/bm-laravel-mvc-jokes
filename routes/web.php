@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JokeController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RolesAndPermissionsController;
 use App\Http\Controllers\StaticPageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 
 //Route::get('/', function () {
@@ -45,5 +48,24 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/jokes', [JokeController::class, 'index'])->name('jokes.index');
 Route::get('/jokes/{id}', [JokeController::class, 'show'])->name('jokes.show');
+
+Route::middleware(['auth:sanctum','role:Superuser|Administrator'])->group(function () {
+    Route::get('/admin', [RolesAndPermissionsController::class, 'index'])->name('admin.roles-editor');
+    Route::post('/admin/assign-permissions', [RolesAndPermissionsController::class, 'assignPermissionToRole'])->name('admin.assign-permissions');
+    Route::post('/admin/revoke-permissions', [RolesAndPermissionsController::class, 'revokePermissionFromRole'])->name('admin.revoke-permissions');
+    Route::post('/admin/store', [RolesAndPermissionsController::class, 'store'])->name('admin.store');
+    Route::delete('/admin/destroy', [RolesAndPermissionsController::class, 'destroy'])->name('admin.destroy');
+
+    Route::get('/roles-permissions', [PermissionController::class, 'index'])->name('roles-permissions.index');
+    Route::get('/roles-permissions/create', [PermissionController::class, 'create'])->name('roles-permissions.create');
+    Route::get('roles-permissions/{id}/edit', [PermissionController::class, 'edit'])->name('roles-permissions.edit');
+    Route::put('roles-permissions/{id}', [PermissionController::class, 'update'])->name('roles-permissions.update');
+    Route::post('/roles-permissions/store', [PermissionController::class, 'store'])->name('roles-permissions.store');
+    Route::delete('/roles-permissions/{permissions}', [PermissionController::class, 'destroy'])->name('roles-permissions.destroy');
+
+});
+
+
+
 
 require __DIR__.'/auth.php';

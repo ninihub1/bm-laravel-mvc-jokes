@@ -15,7 +15,16 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
-                'id' => 6,
+                'id' => 1,
+                'given_name' => 'Blony',
+                'family_name' => 'Maunela',
+                'nickname' => 'nini',
+                'email' => 'blony@example.com',
+                'password' => 'Password1',
+                'email_verified_at' => now(),
+            ],
+            [
+                'id'  => 2,
                 'given_name' => 'Wilka',
                 'family_name' => 'Mangue',
                 'nickname' => 'jennin',
@@ -24,7 +33,7 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ],
             [
-                'id' => 7,
+                'id' => 3,
                 'given_name' => 'Tamsyn',
                 'family_name' => 'Hannan',
                 'nickname' => 'TamsynH',
@@ -33,7 +42,7 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ],
             [
-                'id' => 8,
+                'id' => 4,
                 'given_name' => 'Aliha',
                 'family_name' => 'Maiden',
                 'nickname' => 'AlihaM',
@@ -42,7 +51,7 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ],
             [
-                'id' => 9,
+                'id' => 5,
                 'given_name' => 'Louren',
                 'family_name' => 'Chichava',
                 'nickname' => 'maedejuner',

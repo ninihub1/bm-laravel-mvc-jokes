@@ -60,8 +60,17 @@
                                 <td class="whitespace-nowrap px-6 py-4">{{ $user->given_name . ' ' . $user->family_name}}</td>
                                 <td class="whitespace-nowrap px-6 py-4 w-full">{{ $user->email}}</td>
                                 <td class="whitespace-nowrap px-6 py-4">
-                                    <span class="text-xs text-white bg-zinc-500 px-1 rounded-full min-w-12 inline-block text-center">User</span>
+                                    @if($user->roles->isNotEmpty())
+                                        @foreach($user->roles as $role)
+                                            <span class="text-xs text-white bg-zinc-500 px-2 rounded-full inline-block">
+                                                {{ $role->name }}
+                                            </span>
+                                        @endforeach
+                                    @else
+                                        <span class="text-xs text-white bg-zinc-500 px-2 rounded-full inline-block">Guest</span>
+                                    @endif
                                 </td>
+
                                  <td class="whitespace-nowrap px-6 py-4">
                                     <form action="{{ route('users.destroy', $user) }}"
                                           method="POST"
