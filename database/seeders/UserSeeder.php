@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
                 'nickname' => 'nini',
                 'email' => 'blony@example.com',
                 'password' => 'Password1',
-                'email_verified_at' => now(),
+                'email_verified_at' => null,
             ],
             [
                 'id'  => 2,
@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
                 'nickname' => 'jennin',
                 'email' => 'wilka@example.com',
                 'password' => 'Password1',
-                'email_verified_at' => now(),
+                'email_verified_at' => null,
             ],
             [
                 'id' => 3,
@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
                 'nickname' => 'TamsynH',
                 'email' => 'tamsyn@example.com',
                 'password' => 'Password2',
-                'email_verified_at' => now(),
+                'email_verified_at' => null,
             ],
             [
                 'id' => 4,
@@ -48,7 +48,7 @@ class UserSeeder extends Seeder
                 'nickname' => 'AlihaM',
                 'email' => 'aliha@example.com',
                 'password' => 'Password1',
-                'email_verified_at' => now(),
+                'email_verified_at' => null,
             ],
             [
                 'id' => 5,
@@ -57,7 +57,7 @@ class UserSeeder extends Seeder
                 'nickname' => 'maedejuner',
                 'email' => 'louren@example.com',
                 'password' => 'Password1',
-                'email_verified_at' => now(),
+                'email_verified_at' => null,
             ],
         ];
 
