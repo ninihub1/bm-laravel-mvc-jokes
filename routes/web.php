@@ -34,16 +34,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
-    Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/users/{id}', [UserController::class, 'show'])->where('id', '[0-9]+')->name('users.show');
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::get('/users/trashed', [UserController::class, 'trashed'])->name('users.trashed');
+    Route::patch('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::delete('/users/{id}/force-delete', [UserController::class, 'forceDelete'])->name('users.force-delete');
+
+
 
     Route::get('/jokes/create', [JokeController::class, 'create'])->name('jokes.create');
     Route::post('/jokes', [JokeController::class, 'store'])->name('jokes.store');
     Route::get('/jokes/{id}/edit', [JokeController::class, 'edit'])->name('jokes.edit');
     Route::put('/jokes/{id}', [JokeController::class, 'update'])->name('jokes.update');
     Route::delete('/jokes/{id}', [JokeController::class, 'destroy'])->name('jokes.destroy');
+    Route::get('/jokes/trashed', [JokeController::class, 'trashed'])->name('jokes.trashed');
+    Route::patch('/jokes/{id}/restore', [JokeController::class, 'restore'])->name('jokes.restore');
+    Route::delete('/jokes/{id}/force-delete', [JokeController::class, 'forceDelete'])->name('jokes.force-delete');
 });
 
 Route::get('/jokes', [JokeController::class, 'index'])->name('jokes.index');

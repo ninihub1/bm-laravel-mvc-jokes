@@ -180,39 +180,119 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $users = User::find($id);
+        $user = User::withTrashed()->find($id);
 
-        if (!$users) {
-            return redirect(route('users.index'))
-                ->with('error', 'User Not Found');
+        if (!$user) {
+            return redirect(route('users.index'))->with('error', 'User Not Found');
         }
 
-        if ($users->hasRole('Superuser') || $users->hasRole('Administrator')) {
-            return redirect(route('users.index'))
-                ->with('error', 'You are not allowed to delete this user!');
+        // Check if the user has a higher or equal role
+        if ($user->hasRole('Superuser') || $user->hasRole('Administrator')) {
+            if (auth()->user()->hasRole('Administrator') || auth()->user()->hasRole('Staff')) {
+                return redirect(route('users.index'))
+                    ->with('error', 'You are not authorized to delete this user!');
+            }
+        }
+
+        // Superuser cannot delete themselves
+        if ($user->id == auth()->user()->id && auth()->user()->hasRole('Superuser')) {
+            return redirect(route('users.index'))->with('error', 'You cannot remove yourself from the system!');
+        }
+
+        // Perform soft delete
+        if ($user->trashed()) {
+            return redirect(route('users.index'))->with('error', 'User is already trashed!');
+        }
+
+        $user->delete();
+
+        return redirect(route('users.index'))->with('success', 'User has been trashed');
+    }
+
+    public function trashed()
+    {
+        if (!auth()->check() || auth()->user()->hasRole('Client')) {
+            return redirect(route('static.home'))
+                ->with('error', 'You are not authorized to view this page!');
         }
 
         if (auth()->user()->hasRole('Superuser')) {
-            $users->delete();
-
-            if ($users->id == auth()->user()->id) {
-                return redirect(route('login'))->with('success', 'Your Account Has Been Deleted');
-            }
-
-            return redirect(route('users.index'))->with('success', 'User Deleted');
+            $deletedUsers = User::onlyTrashed()->paginate(10);
+        } elseif (auth()->user()->hasRole('Administrator')) {
+            $deletedUsers = User::onlyTrashed()
+                ->whereDoesntHave('roles', function ($query) {
+                    $query->whereIn('name', ['Administrator', 'Superuser']);
+                })
+                ->paginate(10);
+        } elseif (auth()->user()->hasRole('Staff')) {
+            $deletedUsers = User::onlyTrashed()
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'Client');
+                })
+                ->paginate(10);
+        } else {
+            $deletedUsers = User::onlyTrashed()
+                ->where('id', auth()->user()->id)
+                ->paginate(10);
         }
 
-        if ($users->id == auth()->user()->id || $users->creator_id == auth()->user()->id) {
-            $users->delete();
+        return view('users.trashed', compact('deletedUsers'));
+    }
 
-            if ($users->id == auth()->user()->id) {
-                return redirect(route('login'))->with('success', 'Your Account Has Been Deleted');
-            }
 
-            return redirect(route('users.index'))->with('success', 'User Deleted');
+
+
+    public function restore(string $id)
+    {
+        $user = User::withTrashed()->find($id);
+
+        if (!$user || !$user->trashed()) {
+            return redirect(route('users.index'))->with('error', 'User not found or is not trashed');
         }
 
-        return redirect(route('users.index'))
-            ->with('error', 'You Are Not Authorized To Delete This User!');
+        if (auth()->user()->hasRole('Staff')) {
+            if ($user->hasRole('Administrator') || $user->hasRole('Superuser')) {
+                return redirect(route('users.index'))
+                    ->with('error', 'You are not authorized to restore this user!');
+            }
+        }
+
+        $user->restore();
+
+        return redirect(route('users.index'))->with('success', 'User restored successfully');
+    }
+
+    /**
+     * Permanently delete a user from the system.
+     */
+    public function forceDelete(string $id)
+    {
+        $user = User::withTrashed()->find($id);
+
+        if (!$user || !$user->trashed()) {
+            return redirect(route('users.index'))->with('error', 'User not found or is not trashed');
+        }
+
+        if (auth()->user()->hasRole('Staff')) {
+            if ($user->hasRole('Staff') || $user->hasRole('Administrator') || $user->hasRole('Superuser')) {
+                return redirect(route('users.index'))
+                    ->with('error', 'You are not authorized to permanently delete this user!');
+            }
+        }
+
+        if (auth()->user()->hasRole('Administrator')) {
+            if ($user->hasRole('Administrator') || $user->hasRole('Superuser')) {
+                return redirect(route('users.index'))
+                    ->with('error', 'You are not authorized to permanently delete this user!');
+            }
+        }
+
+        if ($user->id == auth()->user()->id) {
+            return redirect(route('users.index'))->with('error', 'You cannot remove yourself!');
+        }
+
+        $user->forceDelete();
+
+        return redirect(route('users.index'))->with('success', 'User permanently deleted');
     }
 }

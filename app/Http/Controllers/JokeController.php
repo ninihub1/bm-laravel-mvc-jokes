@@ -136,16 +136,83 @@ class JokeController extends Controller
      */
     public function destroy(string $id)
     {
-        $joke = Joke::find($id);
+        $joke = Joke::withTrashed()->find($id);
 
-        // Allow the author of the joke, Administrators, and Superusers to delete the joke
-        if (auth()->check() && (auth()->user()->hasRole(['Superuser', 'Administrator', 'Client']) || $joke->author_id === auth()->user()->id)) {
-            $joke->delete();
-
-            return redirect()->route('jokes.index')
-                ->with('success', 'Joke deleted successfully!');
-        } else {
-            return redirect()->route('jokes.index')->with('error', 'You are not authorized to delete this joke.');
+        if (!$joke) {
+            return redirect(route('jokes.index'))->with('error', 'Joke Not Found');
         }
+
+        if ($joke->trashed()) {
+            return redirect(route('jokes.index'))->with('error', 'Joke is already trashed!');
+        }
+
+        if (auth()->user()->hasRole('Client') && $joke->author_id !== auth()->id()) {
+            return redirect(route('jokes.index'))->with('error', 'You can only delete your own jokes!');
+        }
+
+        $joke->delete();
+
+        return redirect(route('jokes.index'))->with('success', 'Joke has been trashed');
+    }
+
+    public function trashed()
+    {
+        if (auth()->user()->hasRole('Superuser') || auth()->user()->hasRole('Administrator')) {
+            $trashedJokes = Joke::onlyTrashed()->paginate(10);
+        } elseif (auth()->user()->hasRole('Staff')) {
+            $trashedJokes = Joke::onlyTrashed()->whereHas('user', function ($query) {
+                $query->where('role', 'Client');
+            })->paginate(10);
+        } else {
+            $trashedJokes = Joke::onlyTrashed()->where('author_id', auth()->id())->paginate(10);
+        }
+
+        return view('jokes.trashed', compact('trashedJokes'));
+    }
+
+    public function restore(string $id)
+    {
+        $joke = Joke::withTrashed()->find($id);
+
+        if (!$joke || !$joke->trashed()) {
+            return redirect(route('jokes.index'))->with('error', 'Joke not found or is not trashed');
+        }
+
+        if (auth()->user()->hasRole('Client') && $joke->author_id !== auth()->id()) {
+            return redirect(route('jokes.index'))->with('error', 'You can only restore your own jokes!');
+        }
+
+        if (auth()->user()->hasRole('Staff') && $joke->user->hasRole('Staff')) {
+            return redirect(route('jokes.index'))->with('error', 'You are not authorized to restore this joke!');
+        }
+
+        $joke->restore();
+
+        return redirect(route('jokes.index'))->with('success', 'Joke restored successfully');
+    }
+
+    public function forceDelete(string $id)
+    {
+        $joke = Joke::withTrashed()->find($id);
+
+        if (!$joke || !$joke->trashed()) {
+            return redirect(route('jokes.index'))->with('error', 'Joke not found or is not trashed');
+        }
+
+        if (auth()->user()->hasRole('Client') && $joke->author_id !== auth()->id()) {
+            return redirect(route('jokes.index'))->with('error', 'You can only permanently delete your own jokes!');
+        }
+
+        if (auth()->user()->hasRole('Staff') && $joke->user->hasRole('Staff')) {
+            return redirect(route('jokes.index'))->with('error', 'You cannot permanently delete another staff member\'s joke!');
+        }
+
+        if (auth()->user()->hasRole('Administrator') && $joke->user->hasRole('Administrator')) {
+            return redirect(route('jokes.index'))->with('error', 'You cannot permanently delete another administrator\'s joke!');
+        }
+
+        $joke->forceDelete();
+
+        return redirect(route('jokes.index'))->with('success', 'Joke permanently deleted');
     }
 }

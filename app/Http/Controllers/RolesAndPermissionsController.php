@@ -26,7 +26,7 @@ class RolesAndPermissionsController extends Controller
             'role_id' => 'required|exists:roles,id',
         ]);
 
-        $role = Role::findOrFail($request->role_id);  // Fixing role retrieval
+        $role = Role::findOrFail($request->role_id);
         $role->givePermissionTo($request->permission);
 
         return redirect()->back()
@@ -41,7 +41,7 @@ class RolesAndPermissionsController extends Controller
             'role_id' => 'required|exists:roles,id',
         ]);
 
-        $role = Role::findOrFail($request->role_id);  // Fixing role retrieval
+        $role = Role::findOrFail($request->role_id);
         $role->revokePermissionTo($request->permission);
 
         return redirect()->back()
@@ -70,13 +70,19 @@ class RolesAndPermissionsController extends Controller
                     ->with('warning', 'Administrator cannot assign users to Superuser.');
             }
         }
+        if ($user->hasRole('Superuser')) {
+            if ($role->name === 'Superuser') {
+                return redirect()->back()
+                    ->with('warning', 'Superuser cannot assign users to Superuser.');
+            }
+        }
 
         if ($user->hasRole($role)) {
             return redirect()->back()
                 ->with('warning', 'This role is already assigned to the user.');
         }
 
-        $user->assignRole($role);
+        $user->syncRoles($role);
 
         return redirect()->back()
             ->with('success', 'Role assigned to user successfully.');
@@ -91,7 +97,7 @@ class RolesAndPermissionsController extends Controller
         ]);
 
         $user = User::findOrFail($request->user_id);
-        $role = Role::findByName($request->input('role_id'), 'web');
+        $role = Role::findByName($request->input('role'), 'web');
 
         if (auth()->user()->hasRole('Superuser')) {
             if ($role->name === 'Superuser') {
