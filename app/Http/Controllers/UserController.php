@@ -41,7 +41,8 @@ class UserController extends Controller
     public function create()
     {
         if (auth()->user()->hasRole('Superuser') || auth()->user()->hasRole('Administrator')) {
-            return view('users.create');
+            $roles = Role::all();
+            return view('users.create', compact(['roles']));
         }
 
         return redirect(route('users.index'))
@@ -53,20 +54,37 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if (auth()->user()->hasRole('Superuser') || auth()->user()->hasRole('Administrator')) {
+        $user = auth()->user();
+
+        if ($user->hasRole('Superuser') || $user->hasRole('Administrator')) {
             $validated = $request->validate([
                 'given_name' => ['required', 'min:1', 'max:255', 'string'],
                 'family_name' => ['required', 'min:1', 'max:255', 'string'],
                 'nickname' => ['nullable', 'min:1', 'max:255', 'string'],
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
                 'password' => ['required', 'confirmed', 'min:4', 'max:255', Rules\Password::defaults()],
+                'role' => ['required', 'exists:roles,name'],
             ]);
+
+            $role = Role::where('name', $validated['role'])->first();
+
+            if ($user->hasRole('Administrator') && $role->name === 'Superuser') {
+                return redirect()->back()
+                    ->with('warning', 'Administrator cannot assign users to Superuser.');
+            }
+
+            if ($user->hasRole('Superuser') && $role->name === 'Superuser') {
+                return redirect()->back()
+                    ->with('warning', 'Superuser cannot assign users to Superuser.');
+            }
 
             $nickname = $validated['nickname'] ?? $validated['given_name'];
             $validated['nickname'] = $nickname;
             $validated['creator_id'] = auth()->user()->id;
 
-            User::create($validated);
+            $user = User::create($validated);
+
+            $user->assignRole($validated['role']);
 
             return redirect(route('users.index'))->with('success', 'User created');
         }

@@ -95,6 +95,17 @@
                                     <x-text-input type="password" id="password_confirmation" name="password_confirmation"/>
                                     <x-input-error :messages="$errors->get('password')" class="mt-2"/>
                                 </div>
+
+                                <div class="flex flex-col my-2">
+                                    <x-input-label for="role">Role</x-input-label>
+                                    <select name="role" class="border rounded w-1/2">
+                                        <option value="">Select Role</option>
+                                        @foreach ($roles as $role)
+                                            <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <x-input-error :messages="$errors->get('role')" class="mt-2"/>
+                                </div>
                             </section>
 
                             <footer

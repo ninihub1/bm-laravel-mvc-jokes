@@ -60,7 +60,6 @@ class JokeController extends Controller
      */
     public function store(Request $request)
     {
-        // Allow users with Superuser, Administrator, or Client permissions to create jokes
         if (!auth()->user()->hasRole(['Superuser', 'Administrator', 'Client'])) {
             return redirect()->route('jokes.index')
                 ->with('error', 'You do not have permissions to add jokes.');
@@ -94,8 +93,8 @@ class JokeController extends Controller
             return redirect(route('jokes.index'))->with('error', 'Joke not found!');
         }
 
-        // Allow the author of the joke, Administrators, and Superusers to edit the joke
-        if (auth()->check() && (auth()->user()->hasRole(['Superuser', 'Administrator', 'Client']) || $joke->author_id === auth()->user()->id)) {
+
+        if (auth()->check() && (auth()->user()->hasRole(['Superuser', 'Administrator', 'Staff']) || $joke->author_id === auth()->user()->id)) {
             $categories = Category::all();
             return view('jokes.update', compact(['joke'], ['categories']));
         } else {
@@ -120,7 +119,7 @@ class JokeController extends Controller
         $validated['category_id'] = (int) $validated['category_id'];
         $validated['author_id'] = auth()->user()->id;
 
-        if (auth()->check() && (auth()->user()->hasRole(['Superuser', 'Administrator', 'Client']) || $joke->author_id === auth()->user()->id)) {
+        if (auth()->check() && (auth()->user()->hasRole(['Superuser', 'Administrator', 'Staff']) || $joke->author_id === auth()->user()->id)) {
             $joke->update($validated);
 
             return redirect()->route('jokes.index')
